@@ -1,6 +1,7 @@
 // controllers/subscribersController.js
 "use strict";
 
+const { TOO_MANY_REQUESTS } = require('http-status-codes');
 /**
  * @TODO:
  * Listing 16.4 (p. 230-231)
@@ -41,31 +42,31 @@ exports.saveSubscriber = (req, res) => {
     name: req.body.name,
     email: req.body.email,
     phoneNumber: req.body.phoneNumber,
-    newsletter: req.body.newsletter,
+    newsletter: req.body.newsletter === true,
     profileImg: req.body.profileImg
   });
 
-  console.log(req.body.newsletter);
+  console.log(req.body.name);
 
   newSubscriber
     .save()
-    .then(result => {
+    .then((result) => {
       res.render("thanks");
     })
-    .catch(error => {
-      res.send(error);
+    .catch((error) => {
+      if (error) res.send(error);
     });
 };
 
 exports.deleteAllSubscribers = (req, res) => {
   Subscriber.deleteMany({})
     .exec()
-    .then(result => {
+    .then((result) => {
       res.render("subscribers", {
         subscribers: []
       });
     })
-    .catch(error => {
+    .catch((error) => {
       console.log(`ERROR: ${error.message}`);
       return next(error);
     });
